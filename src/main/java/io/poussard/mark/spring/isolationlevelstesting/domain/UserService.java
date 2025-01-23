@@ -17,13 +17,13 @@ public class UserService {
     @Autowired
     private PlatformTransactionManager transactionManager;
 
-    public User createUser(CreateUserRequest request, Isolation isolation) {
+    public User create(CreateUserRequest request, Isolation isolation) {
         TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
         transactionTemplate.setIsolationLevel(isolation.value());
-        return transactionTemplate.execute(_ -> internalCreateUser(request));
+        return transactionTemplate.execute(_ -> internalCreate(request));
     }
 
-    private User internalCreateUser(CreateUserRequest request) {
+    private User internalCreate(CreateUserRequest request) {
         User user = new User(
                 request.getName(),
                 request.getEmail(),
@@ -32,11 +32,11 @@ public class UserService {
         if(userRepository.findByName(user.getName()).isPresent()){
             throw new IllegalArgumentException(String.format("User %s already exists.", user.getName()));
         }
-        return userRepository.save(user); // Save the user object to the database
+        return userRepository.save(user);
     }
 
     @Transactional()
     public List<User> getAllUsers() {
-        return userRepository.findAll(); // Save the user object to the database
+        return userRepository.findAll();
     }
 }
