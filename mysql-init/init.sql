@@ -15,3 +15,12 @@ CREATE TABLE IF NOT EXISTS `idx_user` (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_name (name)
 );
+
+CREATE TABLE IF NOT EXISTS `unique_idx_user` (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE INDEX idx_name (name)
+);

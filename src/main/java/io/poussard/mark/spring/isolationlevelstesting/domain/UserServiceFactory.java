@@ -2,6 +2,7 @@ package io.poussard.mark.spring.isolationlevelstesting.domain;
 
 import io.poussard.mark.spring.isolationlevelstesting.domain.idxuser.IdxUser;
 import io.poussard.mark.spring.isolationlevelstesting.domain.noidxuser.NoIdxUser;
+import io.poussard.mark.spring.isolationlevelstesting.domain.uniqueidx.UniqueIdxUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -14,16 +15,45 @@ public class UserServiceFactory {
     private GenericUserRepository<NoIdxUser> noIdxUserRepository;
     @Autowired
     private GenericUserRepository<IdxUser> idxUserRepository;
+    @Autowired
+    private GenericUserRepository<UniqueIdxUser> uniqueIdxUserRepository;
+
+    private UserService<NoIdxUser> cachedNoIdxUserService;
+    private UserService<IdxUser> cachedIdxUserService;
+    private UserService<UniqueIdxUser> cachedUniqueIdxUserService;
+
+    private UserService<NoIdxUser> getNoIdxUserService(){
+        if(cachedNoIdxUserService == null){
+            cachedNoIdxUserService = new UserService<>(transactionManager, NoIdxUser::new, noIdxUserRepository);
+        }
+        return cachedNoIdxUserService;
+    }
+
+    private UserService<IdxUser> getIdxUserService(){
+        if(cachedIdxUserService == null){
+            cachedIdxUserService = new UserService<>(transactionManager, IdxUser::new, idxUserRepository);
+        }
+        return cachedIdxUserService;
+    }
+
+    private UserService<UniqueIdxUser> getUniqueIdxUserService(){
+        if(cachedUniqueIdxUserService == null){
+            cachedUniqueIdxUserService = new UserService<>(transactionManager, UniqueIdxUser::new, uniqueIdxUserRepository);
+        }
+        return cachedUniqueIdxUserService;
+    }
 
     public UserService<?> getUserService(IndexingMode mode){
         switch (mode){
             case NO_INDEX -> {
-                return new UserService<>(transactionManager, NoIdxUser::new, noIdxUserRepository);
+                return getNoIdxUserService();
             }
             case INDEX -> {
-                return new UserService<>(transactionManager, IdxUser::new, idxUserRepository);
+                return getIdxUserService();
             }
-            case UNIQUE -> throw new IllegalArgumentException("Unique index not implemented");
+            case UNIQUE -> {
+                return getUniqueIdxUserService();
+            }
             default -> throw new IllegalArgumentException("Unknown value " + mode.name());
         }
     }
