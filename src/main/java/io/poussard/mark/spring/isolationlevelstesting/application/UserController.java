@@ -1,8 +1,6 @@
 package io.poussard.mark.spring.isolationlevelstesting.application;
 
-import io.poussard.mark.spring.isolationlevelstesting.domain.User;
-import io.poussard.mark.spring.isolationlevelstesting.domain.UserService;
-import io.poussard.mark.spring.isolationlevelstesting.domain.ConcurrencyTestService;
+import io.poussard.mark.spring.isolationlevelstesting.domain.*;
 import io.poussard.mark.spring.isolationlevelstesting.infrastructure.CreateUserRequest;
 import io.poussard.mark.spring.isolationlevelstesting.infrastructure.ConcurrencyTestResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,40 +16,44 @@ import java.util.List;
 public class UserController {
 
     @Autowired
-    private UserService userService;
+    private UserServiceFactory userServiceFactory;
     @Autowired
     private ConcurrencyTestService concurrencyTestService;
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody CreateUserRequest request, @RequestParam Isolation isolation) {
-        User createdUser = userService.create(request, isolation);
-        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+    public ResponseEntity<GenericUser> createUser(@RequestBody CreateUserRequest request, @RequestParam Isolation isolation, @RequestParam IndexingMode index) {
+        UserService<?> service = userServiceFactory.getUserService(index);
+        GenericUser user = service.create(request, isolation);
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> getUsers() {
-        List<User> users = userService.getAllUsers();
+    public ResponseEntity<List<? extends GenericUser>> getUsers(@RequestParam IndexingMode index) {
+        UserService<?> service = userServiceFactory.getUserService(index);
+        List<? extends GenericUser> users = service.getAll();
         return new ResponseEntity<>(users, HttpStatus.CREATED);
     }
 
     // Try this with different isolation levels
     @PostMapping("test/concurrent-create")
-    public ResponseEntity<ConcurrencyTestResult<User>> testConcurrentCreate(@RequestBody CreateUserRequest request, @RequestParam Isolation isolation) {
-        ConcurrencyTestResult<User> result = concurrencyTestService.runConcurrently(_ -> userService.create(request, isolation), 20);
+    public ResponseEntity<ConcurrencyTestResult<GenericUser>> testConcurrentCreate(@RequestBody CreateUserRequest request, @RequestParam Isolation isolation, @RequestParam IndexingMode index) {
+        UserService<?> service = userServiceFactory.getUserService(index);
+        ConcurrencyTestResult<GenericUser> result = concurrencyTestService.runConcurrently(_ -> service.create(request, isolation), 20);
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
     // Try this with different isolation levels
     @PostMapping("test/neighbour-create")
-    public ResponseEntity<ConcurrencyTestResult<User>> testNeighbourCreate(@RequestBody CreateUserRequest request, @RequestParam Isolation isolation) {
-        ConcurrencyTestResult<User> result = concurrencyTestService.runConcurrently(index -> {
+    public ResponseEntity<ConcurrencyTestResult<GenericUser>> testNeighbourCreate(@RequestBody CreateUserRequest request, @RequestParam Isolation isolation, @RequestParam IndexingMode index) {
+        UserService<?> service = userServiceFactory.getUserService(index);
+        ConcurrencyTestResult<GenericUser> result = concurrencyTestService.runConcurrently(i -> {
             CreateUserRequest neighbourRequest = new CreateUserRequest(
-                    request.getName() + index,
+                    request.getName() + i,
                     request.getEmail(),
                     request.getPassword()
             );
-            return userService.create(neighbourRequest, isolation);
-        }, 50);
+            return service.create(neighbourRequest, isolation);
+        }, 20);
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 }

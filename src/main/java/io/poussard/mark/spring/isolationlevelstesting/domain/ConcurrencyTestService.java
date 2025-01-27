@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 @Service
 public class ConcurrencyTestService {
@@ -14,7 +13,7 @@ public class ConcurrencyTestService {
         ConcurrentLinkedQueue<T> success = new ConcurrentLinkedQueue<>();
         ConcurrentLinkedQueue<String> failures = new ConcurrentLinkedQueue<>();
         CompletableFuture[] tasks = new CompletableFuture[count];
-        long start = System.currentTimeMillis();
+        long start = System.nanoTime();
         for(int i=0; i<count; i++){
             final int finalI = i;
             tasks[i] = CompletableFuture.runAsync(() -> {
@@ -26,7 +25,7 @@ public class ConcurrencyTestService {
             });
         }
         CompletableFuture.allOf(tasks).join();
-        long duration = System.currentTimeMillis() - start;
-        return new ConcurrencyTestResult<T>(success.stream().toList(), failures.stream().toList(), duration);
+        long duration = System.nanoTime() - start;
+        return new ConcurrencyTestResult<>(success.stream().toList(), failures.stream().toList(), duration);
     }
 }

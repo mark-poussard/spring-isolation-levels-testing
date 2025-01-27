@@ -1,13 +1,12 @@
 package io.poussard.mark.spring.isolationlevelstesting.domain;
 
-import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
 
-@Entity
-public class User {
-
+@MappedSuperclass
+public abstract class GenericUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -16,17 +15,16 @@ public class User {
     private String email;
     private String password;
 
-    public User() {
+    public GenericUser() {
     }
 
-    public User(String name, String email, String password) {
+    public GenericUser(String name, String email, String password) {
         this.id = null;
         this.name = name;
         this.email = email;
         this.password = password;
     }
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }

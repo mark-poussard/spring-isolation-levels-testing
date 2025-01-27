@@ -12,9 +12,9 @@ docker-compose up --build
 
 # Testing database concurrency
 
-Use following request to test adding a user concurrently with different isolation levels
+Use following request to test adding a noIdxUser concurrently with different isolation levels
 ```
-POST http://localhost:8080/api/users/test/concurrent-create?isolation={ISOLATION_LEVEL}
+POST http://localhost:8080/api/noIdxUsers/test/concurrent-create?isolation={ISOLATION_LEVEL}&index=NO_INDEX
 ```
 
 ## Example : Write-skew avoided through serializable isolation
@@ -22,7 +22,7 @@ POST http://localhost:8080/api/users/test/concurrent-create?isolation={ISOLATION
 ### Serializable isolation level
 
 ```
-POST http://localhost:8080/api/users/test/concurrent-create?isolation=SERIALIZABLE
+POST http://localhost:8080/api/noIdxUsers/test/concurrent-create?isolation=SERIALIZABLE&index=NO_INDEX
 
 {
     "success": [
@@ -44,15 +44,15 @@ POST http://localhost:8080/api/users/test/concurrent-create?isolation=SERIALIZAB
         "User mark already exists.",
         "User mark already exists.",
         "User mark already exists.",
-        "could not execute statement [Deadlock found when trying to get lock; try restarting transaction] [insert into user (email,name,password) values (?,?,?)]; SQL [insert into user (email,name,password) values (?,?,?)]",
-        "could not execute statement [Deadlock found when trying to get lock; try restarting transaction] [insert into user (email,name,password) values (?,?,?)]; SQL [insert into user (email,name,password) values (?,?,?)]",
-        "could not execute statement [Deadlock found when trying to get lock; try restarting transaction] [insert into user (email,name,password) values (?,?,?)]; SQL [insert into user (email,name,password) values (?,?,?)]",
-        "could not execute statement [Deadlock found when trying to get lock; try restarting transaction] [insert into user (email,name,password) values (?,?,?)]; SQL [insert into user (email,name,password) values (?,?,?)]",
-        "could not execute statement [Deadlock found when trying to get lock; try restarting transaction] [insert into user (email,name,password) values (?,?,?)]; SQL [insert into user (email,name,password) values (?,?,?)]",
-        "could not execute statement [Deadlock found when trying to get lock; try restarting transaction] [insert into user (email,name,password) values (?,?,?)]; SQL [insert into user (email,name,password) values (?,?,?)]",
-        "could not execute statement [Deadlock found when trying to get lock; try restarting transaction] [insert into user (email,name,password) values (?,?,?)]; SQL [insert into user (email,name,password) values (?,?,?)]",
-        "could not execute statement [Deadlock found when trying to get lock; try restarting transaction] [insert into user (email,name,password) values (?,?,?)]; SQL [insert into user (email,name,password) values (?,?,?)]",
-        "could not execute statement [Deadlock found when trying to get lock; try restarting transaction] [insert into user (email,name,password) values (?,?,?)]; SQL [insert into user (email,name,password) values (?,?,?)]"
+        "could not execute statement [Deadlock found when trying to get lock; try restarting transaction] [insert into noIdxUser (email,name,password) values (?,?,?)]; SQL [insert into noIdxUser (email,name,password) values (?,?,?)]",
+        "could not execute statement [Deadlock found when trying to get lock; try restarting transaction] [insert into noIdxUser (email,name,password) values (?,?,?)]; SQL [insert into noIdxUser (email,name,password) values (?,?,?)]",
+        "could not execute statement [Deadlock found when trying to get lock; try restarting transaction] [insert into noIdxUser (email,name,password) values (?,?,?)]; SQL [insert into noIdxUser (email,name,password) values (?,?,?)]",
+        "could not execute statement [Deadlock found when trying to get lock; try restarting transaction] [insert into noIdxUser (email,name,password) values (?,?,?)]; SQL [insert into noIdxUser (email,name,password) values (?,?,?)]",
+        "could not execute statement [Deadlock found when trying to get lock; try restarting transaction] [insert into noIdxUser (email,name,password) values (?,?,?)]; SQL [insert into noIdxUser (email,name,password) values (?,?,?)]",
+        "could not execute statement [Deadlock found when trying to get lock; try restarting transaction] [insert into noIdxUser (email,name,password) values (?,?,?)]; SQL [insert into noIdxUser (email,name,password) values (?,?,?)]",
+        "could not execute statement [Deadlock found when trying to get lock; try restarting transaction] [insert into noIdxUser (email,name,password) values (?,?,?)]; SQL [insert into noIdxUser (email,name,password) values (?,?,?)]",
+        "could not execute statement [Deadlock found when trying to get lock; try restarting transaction] [insert into noIdxUser (email,name,password) values (?,?,?)]; SQL [insert into noIdxUser (email,name,password) values (?,?,?)]",
+        "could not execute statement [Deadlock found when trying to get lock; try restarting transaction] [insert into noIdxUser (email,name,password) values (?,?,?)]; SQL [insert into noIdxUser (email,name,password) values (?,?,?)]"
     ]
 }
 ```
@@ -60,7 +60,7 @@ POST http://localhost:8080/api/users/test/concurrent-create?isolation=SERIALIZAB
 ### Default isolation level
 
 ```
-POST http://localhost:8080/api/users/test/concurrent-create?isolation=DEFAULT
+POST http://localhost:8080/api/noIdxUsers/test/concurrent-create?isolation=DEFAULT&index=NO_INDEX
 
 {
     "success": [
@@ -145,7 +145,7 @@ POST http://localhost:8080/api/users/test/concurrent-create?isolation=DEFAULT
 ### Serializable isolation level
 
 ```
-POST http://localhost:8080/api/users/test/neighbour-create?isolation=SERIALIZABLE
+POST http://localhost:8080/api/noIdxUsers/test/neighbour-create?isolation=SERIALIZABLE&index=NO_INDEX
 
 {
     "success": [
@@ -169,13 +169,13 @@ POST http://localhost:8080/api/users/test/neighbour-create?isolation=SERIALIZABL
         }
     ],
     "failures": [
-        "could not execute statement [Deadlock found when trying to get lock; try restarting transaction] [insert into user (email,name,password) values (?,?,?)]; SQL [insert into user (email,name,password) values (?,?,?)]",
-        "could not execute statement [Deadlock found when trying to get lock; try restarting transaction] [insert into user (email,name,password) values (?,?,?)]; SQL [insert into user (email,name,password) values (?,?,?)]",
-        "could not execute statement [Deadlock found when trying to get lock; try restarting transaction] [insert into user (email,name,password) values (?,?,?)]; SQL [insert into user (email,name,password) values (?,?,?)]",
-        "could not execute statement [Deadlock found when trying to get lock; try restarting transaction] [insert into user (email,name,password) values (?,?,?)]; SQL [insert into user (email,name,password) values (?,?,?)]",
+        "could not execute statement [Deadlock found when trying to get lock; try restarting transaction] [insert into noIdxUser (email,name,password) values (?,?,?)]; SQL [insert into noIdxUser (email,name,password) values (?,?,?)]",
+        "could not execute statement [Deadlock found when trying to get lock; try restarting transaction] [insert into noIdxUser (email,name,password) values (?,?,?)]; SQL [insert into noIdxUser (email,name,password) values (?,?,?)]",
+        "could not execute statement [Deadlock found when trying to get lock; try restarting transaction] [insert into noIdxUser (email,name,password) values (?,?,?)]; SQL [insert into noIdxUser (email,name,password) values (?,?,?)]",
+        "could not execute statement [Deadlock found when trying to get lock; try restarting transaction] [insert into noIdxUser (email,name,password) values (?,?,?)]; SQL [insert into noIdxUser (email,name,password) values (?,?,?)]",
         ...
-        "could not execute statement [Deadlock found when trying to get lock; try restarting transaction] [insert into user (email,name,password) values (?,?,?)]; SQL [insert into user (email,name,password) values (?,?,?)]",
-        "could not execute statement [Deadlock found when trying to get lock; try restarting transaction] [insert into user (email,name,password) values (?,?,?)]; SQL [insert into user (email,name,password) values (?,?,?)]"
+        "could not execute statement [Deadlock found when trying to get lock; try restarting transaction] [insert into noIdxUser (email,name,password) values (?,?,?)]; SQL [insert into noIdxUser (email,name,password) values (?,?,?)]",
+        "could not execute statement [Deadlock found when trying to get lock; try restarting transaction] [insert into noIdxUser (email,name,password) values (?,?,?)]; SQL [insert into noIdxUser (email,name,password) values (?,?,?)]"
     ]
 }
 ```
@@ -183,7 +183,7 @@ POST http://localhost:8080/api/users/test/neighbour-create?isolation=SERIALIZABL
 ### Default isolation level
 
 ```
-POST http://localhost:8080/api/users/test/neighbour-create?isolation=DEFAULT
+POST http://localhost:8080/api/noIdxUsers/test/neighbour-create?isolation=DEFAULT&index=NO_INDEX
 
 {
     "success": [
@@ -239,4 +239,26 @@ POST http://localhost:8080/api/users/test/neighbour-create?isolation=DEFAULT
     ],
     "failures": []
 }
+```
+
+# Cheatsheet
+
+Force recreate
+```
+docker-compose up --force-recreate
+```
+
+List docker process
+```
+sudo docker ps -a
+```
+
+Remove docker process
+```
+sudo docker rm $PROCESS_ID
+```
+
+Connect to docker database
+```
+docker exec -it mysql_container mysql -uroot -proot mydb
 ```
