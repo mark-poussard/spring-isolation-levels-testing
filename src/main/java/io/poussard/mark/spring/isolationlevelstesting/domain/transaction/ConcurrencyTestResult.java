@@ -1,4 +1,4 @@
-package io.poussard.mark.spring.isolationlevelstesting.infrastructure;
+package io.poussard.mark.spring.isolationlevelstesting.domain.transaction;
 
 import java.util.List;
 

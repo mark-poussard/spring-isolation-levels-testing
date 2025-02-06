@@ -1,4 +1,4 @@
-package io.poussard.mark.spring.isolationlevelstesting.domain;
+package io.poussard.mark.spring.isolationlevelstesting.domain.transaction;
 
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

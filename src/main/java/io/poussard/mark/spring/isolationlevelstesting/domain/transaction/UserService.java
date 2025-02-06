@@ -1,6 +1,5 @@
-package io.poussard.mark.spring.isolationlevelstesting.domain;
+package io.poussard.mark.spring.isolationlevelstesting.domain.transaction;
 
-import io.poussard.mark.spring.isolationlevelstesting.infrastructure.CreateUserRequest;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.support.TransactionTemplate;

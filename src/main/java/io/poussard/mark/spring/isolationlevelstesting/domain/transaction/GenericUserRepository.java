@@ -1,4 +1,4 @@
-package io.poussard.mark.spring.isolationlevelstesting.domain;
+package io.poussard.mark.spring.isolationlevelstesting.domain.transaction;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;

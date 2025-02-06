@@ -1,6 +1,5 @@
-package io.poussard.mark.spring.isolationlevelstesting.domain;
+package io.poussard.mark.spring.isolationlevelstesting.domain.transaction;
 
-import io.poussard.mark.spring.isolationlevelstesting.infrastructure.ConcurrencyTestResult;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.CompletableFuture;

@@ -1,6 +1,6 @@
-package io.poussard.mark.spring.isolationlevelstesting.domain.uniqueidx;
+package io.poussard.mark.spring.isolationlevelstesting.domain.transaction.uniqueidx;
 
-import io.poussard.mark.spring.isolationlevelstesting.domain.GenericUser;
+import io.poussard.mark.spring.isolationlevelstesting.domain.transaction.GenericUser;
 import jakarta.persistence.Entity;
 
 @Entity

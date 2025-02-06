@@ -1,20 +1,27 @@
 # Spring Isolation Levels Testing
 
-This is a test project to try out database isolation levels and concurrent write issues to convince ourselves of
+This is a test project to try out different data constraints enforcement techniques in distributed systems.
+
+The main constraint we explore here is value uniqueness, we assume that most other complex constraints can be derived from this one.
+
+The project tests out database isolation levels and concurrent write issues to convince ourselves of
 - the need for `serializable` isolation, especially in read-modify-update cycles
 - the `serializable` isolation guarantees are handled as expected in Spring
 
+The project also explores other avenues of data uniqueness enforcement, namely through asynchronous log-based message brokers (Kafka).
+
+Using a log-based message broker, we enforce uniqueness through judicious partitioning and bridge the async to sync gap so that the user receives feedback on their operation.
+
 # How to run
 ```
-./gradlew build
-docker-compose up --build
+./gradlew run
 ```
 
 # Testing database concurrency
 
-Use following request to test adding a noIdxUser concurrently with different isolation levels
+Use following request to test adding a user concurrently with different isolation levels
 ```
-POST http://localhost:8080/api/noIdxUsers/test/concurrent-create?isolation={ISOLATION_LEVEL}&index=NO_INDEX
+POST http://localhost:8080/api/users/test/concurrent-create?isolation={ISOLATION_LEVEL}&index=NO_INDEX
 ```
 
 ## Example : Write-skew avoided through serializable isolation
@@ -22,7 +29,7 @@ POST http://localhost:8080/api/noIdxUsers/test/concurrent-create?isolation={ISOL
 ### Serializable isolation level
 
 ```
-POST http://localhost:8080/api/noIdxUsers/test/concurrent-create?isolation=SERIALIZABLE&index=NO_INDEX
+POST http://localhost:8080/api/users/test/concurrent-create?isolation=SERIALIZABLE&index=NO_INDEX
 
 {
     "success": [
@@ -60,7 +67,7 @@ POST http://localhost:8080/api/noIdxUsers/test/concurrent-create?isolation=SERIA
 ### Default isolation level
 
 ```
-POST http://localhost:8080/api/noIdxUsers/test/concurrent-create?isolation=DEFAULT&index=NO_INDEX
+POST http://localhost:8080/api/users/test/concurrent-create?isolation=DEFAULT&index=NO_INDEX
 
 {
     "success": [
@@ -145,7 +152,7 @@ POST http://localhost:8080/api/noIdxUsers/test/concurrent-create?isolation=DEFAU
 ### Serializable isolation level
 
 ```
-POST http://localhost:8080/api/noIdxUsers/test/neighbour-create?isolation=SERIALIZABLE&index=NO_INDEX
+POST http://localhost:8080/api/users/test/neighbour-create?isolation=SERIALIZABLE&index=NO_INDEX
 
 {
     "success": [
@@ -183,7 +190,7 @@ POST http://localhost:8080/api/noIdxUsers/test/neighbour-create?isolation=SERIAL
 ### Default isolation level
 
 ```
-POST http://localhost:8080/api/noIdxUsers/test/neighbour-create?isolation=DEFAULT&index=NO_INDEX
+POST http://localhost:8080/api/users/test/neighbour-create?isolation=DEFAULT&index=NO_INDEX
 
 {
     "success": [
@@ -239,6 +246,22 @@ POST http://localhost:8080/api/noIdxUsers/test/neighbour-create?isolation=DEFAUL
     ],
     "failures": []
 }
+```
+
+# Testing uniqueness enforcement through a log-based broker
+
+In our log-based broker testing, the isolation level is always DEFAULT and there is no index on the table.
+
+```
+POST http://localhost:8080/api/users/msg-based/test/concurrent-create
+Headers
+    - Idempotency-Key : {UNIQUE_ID}
+```
+
+```
+POST http://localhost:8080/api/users/msg-based/test/neighbour-create
+Headers
+    - Idempotency-Key : {UNIQUE_ID}
 ```
 
 # Cheatsheet

@@ -1,8 +1,8 @@
-package io.poussard.mark.spring.isolationlevelstesting.domain;
+package io.poussard.mark.spring.isolationlevelstesting.domain.transaction;
 
-import io.poussard.mark.spring.isolationlevelstesting.domain.idxuser.IdxUser;
-import io.poussard.mark.spring.isolationlevelstesting.domain.noidxuser.NoIdxUser;
-import io.poussard.mark.spring.isolationlevelstesting.domain.uniqueidx.UniqueIdxUser;
+import io.poussard.mark.spring.isolationlevelstesting.domain.transaction.idxuser.IdxUser;
+import io.poussard.mark.spring.isolationlevelstesting.domain.transaction.noidxuser.NoIdxUser;
+import io.poussard.mark.spring.isolationlevelstesting.domain.transaction.uniqueidx.UniqueIdxUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
